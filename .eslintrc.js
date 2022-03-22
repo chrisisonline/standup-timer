@@ -1,3 +1,4 @@
+/* eslint-disable comma-dangle */
 module.exports = {
   env: {
     browser: true,
@@ -18,5 +19,7 @@ module.exports = {
     'react'
   ],
   rules: {
+    'no-unused-vars': ['warn'],
+    'space-before-function-paren': ['error', 'never'],
   }
 }
