@@ -6,6 +6,7 @@ module.exports = {
   },
   extends: [
     'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
     'standard'
   ],
   parserOptions: {
@@ -16,10 +17,19 @@ module.exports = {
     sourceType: 'module'
   },
   plugins: [
-    'react'
+    'react',
+    '@typescript-eslint'
   ],
   rules: {
-    'no-unused-vars': ['warn'],
+    '@typescript-eslint/indent': [
+      'warn',
+      2
+    ],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['warn'],
+    '@typescript-eslint/no-use-before-define': ['error'],
     'space-before-function-paren': ['error', 'never'],
+    'no-use-before-define': 'off',
+    'react/prop-types': 'off'
   }
 }
