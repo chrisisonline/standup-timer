@@ -1,5 +1,5 @@
 import React from 'react'
-import { CircularProgressbar, CircularProgressbarWithChildren } from 'react-circular-progressbar'
+import { CircularProgressbar } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
 
 import { Box, Button, Container } from '@mui/material'
@@ -7,7 +7,6 @@ import myTheme from '../theme.js'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
 import FastForwardIcon from '@mui/icons-material/FastForward'
-import ReplayIcon from '@mui/icons-material/Replay'
 
 function Timer({
   isStarted,
@@ -16,8 +15,7 @@ function Timer({
   timerString,
   handleStart,
   handlePause,
-  handleNext,
-  handleReset
+  handleNext
 }) {
   return (
     <>
@@ -42,7 +40,7 @@ function Timer({
               r: '45'
             },
             text: {
-              textShadow: '2.5px 2.5px black',
+              textShadow: myTheme.shadows[2],
               fill: myTheme.palette.primary.main,
               paintOrder: 'stroke',
               stroke: 'black',
@@ -64,11 +62,10 @@ function Timer({
       </Box>
       <Container sx={{ justifyContent: 'center', gap: 2 }}>
         {showStart
-          ? <Button variant="contained" onClick={handleStart}>Start <PlayArrowIcon /></Button>
+          ? <Button variant="contained" onClick={handleStart}>Resume <PlayArrowIcon /></Button>
           : <Button variant="contained" onClick={handlePause}>Pause <PauseIcon /></Button>}
         <Button variant="contained" onClick={handleNext}>Next <FastForwardIcon /></Button>
       </Container>
-      <Button variant="contained" onClick={handleReset}>Reset <ReplayIcon /></Button>
     </>
   )
 }

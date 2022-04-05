@@ -8,7 +8,7 @@ function ImgTitle({ imgSrc, tilted }: { imgSrc: string, tilted?: boolean }) {
       width: '8rem',
       transform: tilted ? 'translateX(-50px) rotate(350deg)' : 'none'
     }}>
-      <Image src={imgSrc} style={{
+      <Image src={imgSrc} duration={0} style={{
         filter: 'drop-shadow(2px 2px 0 black)'
       }} />
     </Box>
