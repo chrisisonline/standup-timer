@@ -1,27 +1,18 @@
 import React from 'react'
 
-import { Container, Typography } from '@mui/material'
-import perPerson from '../imgs/per-person.svg'
-import ImgTitle from './ImgTitle'
-import myTheme from '../theme'
+import { Box, Typography } from '@mui/material'
+import SectionTitle from './SectionTitle'
+import { colors } from '../theme'
+import SectionContainer from './SectionContainer'
 
 function TimeList({ timeList }) {
   return (
-    <Container sx={{
-      flexDirection: 'column',
-      gap: 1,
-      padding: '2rem 2rem 4rem',
-      backgroundColor: myTheme.palette.info.main,
-      borderWidth: '6px',
-      borderStyle: 'dashed',
-      borderColor: myTheme.palette.info.dark,
-      borderRadius: '24px'
-    }}>
-      <ImgTitle imgSrc={perPerson} tilted />
+    <SectionContainer color={colors.yellow} sx={{ paddingBottom: '3rem' }}>
+      <SectionTitle text="Per Person" tilted />
       {timeList.map((item, index) =>
         <Typography key={index + '-' + item} variant='h4'>{item}</Typography>
       )}
-    </Container>
+    </SectionContainer>
   )
 }
 

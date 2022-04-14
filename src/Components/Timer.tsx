@@ -55,7 +55,7 @@ function Timer({
             },
             trail: {
               stroke: 'var(--cream-color)',
-              filter: 'drop-shadow(4px 4px 0 black)'
+              filter: 'drop-shadow(3px 3px 0 black)'
             }
           }}
         />

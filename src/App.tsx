@@ -1,18 +1,16 @@
 import React, { useState } from 'react'
 import { Container, Box, Autocomplete, TextField, Typography } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
-import Image from 'mui-image'
 import useTimer from 'easytimer-react-hook'
 
 import Timer from './Components/Timer'
 import TotalTime from './Components/TotalTime'
 import TimeList from './Components/TimeList'
 import Button from './Components/Button'
-import myTheme from './theme.js'
+import myTheme, { colors } from './theme.js'
 import './App.css'
 
-import standupTimer from './imgs/standup-timer.svg'
-import startTime from './imgs/start-time.svg'
+import SectionContainer from './Components/SectionContainer'
 
 function App() {
   /* --- State & Hooks --- */
@@ -128,35 +126,20 @@ function App() {
   /* --- Component Rendering --- */
   return (
     <ThemeProvider theme={myTheme}>
-      <Box mt={6} mx='auto' sx={{ width: '28rem' }}>
-        <Image src={standupTimer} duration={0} style={{
-          filter: 'drop-shadow(4px 4px 0 black)'
-        }} />
+      <Box mt={6} mx='auto'>
+        <Typography variant='h1'>Standup Timer</Typography>
       </Box>
       <Container sx={{
         alignItems: 'flex-start',
         color: 'var(--cream-color)',
         margin: '3rem auto',
-        gap: 0
+        gap: 0,
+        width: '900px'
       }}>
         {
           !state.isStarted
-            ? <Container
-              sx={{
-                backgroundColor: myTheme.palette.secondary.main,
-                borderWidth: '6px',
-                borderStyle: 'dashed',
-                borderColor: myTheme.palette.secondary.dark,
-                borderRadius: '24px',
-                padding: '3rem',
-                flexDirection: 'column',
-                width: 'fit-content'
-              }}
-            >
-              <Image src={startTime} duration={0} style={{
-                filter: 'drop-shadow(4px 4px 0 black)',
-                width: '24rem'
-              }} />
+            ? <SectionContainer color={colors.yellow} sx={{ width: '50%', gap: '1.5rem' }}>
+              <Typography variant='h3'>Time per Participant</Typography>
               <Autocomplete
                 disablePortal
                 onChange={handleStartTime}
@@ -168,11 +151,12 @@ function App() {
                     placeholder='00:00'
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        backgroundColor: 'var(--cream-color)',
                         fontWeight: 'bold',
+                        backgroundColor: 'var(--cream-color)',
+                        borderRadius: '12px',
                         '& fieldset': {
                           border: '4px solid black',
-                          borderRadius: 0,
+                          borderRadius: '12px',
                           boxShadow: myTheme.shadows[2]
                         },
                         '&.Mui-focused fieldset': {
@@ -186,11 +170,11 @@ function App() {
                 }
               />
               <Button text='Start' handleFunction={handleStart} iconType="play" />
-            </Container>
+            </SectionContainer>
             : <>
               <Container sx={{
                 flexDirection: 'column',
-                flexBasis: '50%'
+                width: '55%'
               }}>
                 <Timer
                   isStarted={state.isStarted}
@@ -205,7 +189,7 @@ function App() {
               </Container>
               <Container sx={{
                 flexDirection: 'column',
-                flexBasis: '50%'
+                width: '45%'
               }}>
                 <TotalTime totalTimeString={totalTimer.getTimeValues().toString(['minutes', 'seconds'])} />
                 <TimeList timeList={state.timeList} />
