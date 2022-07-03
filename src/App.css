@@ -11,3 +11,20 @@ body {
   background-color: var(--cream-color);
   min-height: 100vh;
 }
+
+.blinking-circle {
+  animation: blinkingcircle 2s infinite;
+}
+@keyframes blinkingcircle {
+  0%		{ stroke: #EED865; }
+  50%		{ stroke: var(--cream-color); }
+  100%	{ stroke: #EED865; }
+}
+/* .blinking-text {
+  animation: blinkingtext 2s infinite;
+}
+@keyframes blinkingtext {
+  0%		{ fill: #EED865; }
+  50%		{ fill: var(--cream-color); }
+  100%	{ fill: #EED865; }
+} */
