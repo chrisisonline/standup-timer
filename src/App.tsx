@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Container, Box, Autocomplete, TextField, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { Container, Box, Typography } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
 import useTimer from 'easytimer-react-hook'
 
@@ -7,22 +7,35 @@ import Timer from './Components/Timer'
 import TotalTime from './Components/TotalTime'
 import TimeList from './Components/TimeList'
 import Button from './Components/Button'
-import myTheme, { colors } from './theme.js'
+import myTheme from './theme.js'
 import './App.css'
 
-import SectionContainer from './Components/SectionContainer'
+import Configuration from './Components/Configuration'
 
 function App() {
   /* --- State & Hooks --- */
   const [state, setState] = useState({
     startTime: 30,
-    showStart: true,
+    isPaused: true,
     isStarted: false,
-    timeList: []
+    timeList: [],
+    isOvertime: false
   })
   // easy-time lib, totalTimer counts up, timer counts down per person
   const [totalTimer] = useTimer()
   const [timer] = useTimer()
+  const [overTimer] = useTimer()
+
+  // Check if overtime
+  useEffect(() => {
+    if (state.isStarted && timer.getTotalTimeValues().seconds === 0) {
+      setState({
+        ...state,
+        isOvertime: true
+      })
+      overTimer.start()
+    }
+  }, [timer.getTotalTimeValues().seconds])
 
   /* --- Helper Functions --- */
   // Convert seconds to time formatted string
@@ -74,8 +87,10 @@ function App() {
       startTime: stringToTime(e.target.innerHTML)
     })
   }
-  // handle button events
   const handleStart = () => {
+    if (state.isOvertime) {
+      overTimer.start()
+    }
     timer.start({
       countdown: true,
       startValues: { seconds: state.startTime }
@@ -83,42 +98,54 @@ function App() {
     totalTimer.start()
     setState({
       ...state,
-      showStart: false,
+      isPaused: false,
       isStarted: true
     })
   }
   const handlePause = () => {
     timer.pause()
+    overTimer.pause()
     totalTimer.pause()
     setState({
       ...state,
-      showStart: true
+      isPaused: true
     })
   }
   const handleNext = () => {
     timer.pause()
+    overTimer.pause()
     totalTimer.pause()
 
-    const timeSpent = Math.round(state.startTime - timer.getTotalTimeValues().seconds)
+    const timeSpent = Math.round(
+      state.isOvertime
+        ? state.startTime + overTimer.getTotalTimeValues().seconds
+        : state.startTime - timer.getTotalTimeValues().seconds
+    )
 
     setState({
       ...state,
-      showStart: false,
+      isPaused: false,
+      isOvertime: false,
       timeList: [...state.timeList, timeToString(timeSpent)]
     })
 
+    overTimer.reset()
+    overTimer.stop()
     timer.reset()
     totalTimer.start()
   }
   const handleReset = () => {
     timer.reset()
     timer.stop()
+    overTimer.reset()
+    overTimer.stop()
     totalTimer.reset()
     totalTimer.stop()
     setState({
       ...state,
-      showStart: true,
+      isPaused: true,
       isStarted: false,
+      isOvertime: false,
       timeList: []
     })
   }
@@ -138,55 +165,37 @@ function App() {
       }}>
         {
           !state.isStarted
-            ? <SectionContainer color={colors.yellow} sx={{ width: '50%', gap: '1.5rem' }}>
-              <Typography variant='h3'>Time per Participant</Typography>
-              <Autocomplete
-                disablePortal
-                onChange={handleStartTime}
-                options={options()}
-                sx={{ width: '16rem' }}
-                renderInput={(params) =>
-                  <TextField
-                    variant='outlined'
-                    placeholder='00:00'
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        fontWeight: 'bold',
-                        backgroundColor: 'var(--cream-color)',
-                        borderRadius: '12px',
-                        '& fieldset': {
-                          border: '4px solid black',
-                          borderRadius: '12px',
-                          boxShadow: myTheme.shadows[2]
-                        },
-                        '&.Mui-focused fieldset': {
-                          border: '4px solid black',
-                          boxShadow: myTheme.shadows[1]
-                        }
-                      }
-                    }}
-                    {...params}
-                  />
-                }
-              />
+            // Landing page - configurations
+            ? <Configuration
+              handleStartTime={handleStartTime}
+              options={options}>
               <Button text='Start' handleFunction={handleStart} iconType="play" />
-            </SectionContainer>
+            </Configuration>
             : <>
+              {/* Timer GUI & It's Controls */}
               <Container sx={{
                 flexDirection: 'column',
                 width: '55%'
               }}>
                 <Timer
                   isStarted={state.isStarted}
-                  showStart={state.showStart}
-                  timerProgress={timeToProgress(timer.getTotalTimeValues().seconds)}
-                  timerString={timer.getTimeValues().toString(['minutes', 'seconds'])}
+                  isPaused={state.isPaused}
+                  timerProgress={timeToProgress(
+                    timer.getTotalTimeValues().seconds
+                  )}
+                  timerString={
+                    state.isOvertime
+                      ? overTimer.getTimeValues().toString(['minutes', 'seconds'])
+                      : timer.getTimeValues().toString(['minutes', 'seconds'])
+                  }
+                  isOverTime={state.isOvertime}
                   handleStart={handleStart}
                   handlePause={handlePause}
                   handleNext={handleNext}
                 />
                 <Button text='Reset' handleFunction={handleReset} iconType="reset" />
               </Container>
+              {/* Time trackers */}
               <Container sx={{
                 flexDirection: 'column',
                 width: '45%'
@@ -197,7 +206,7 @@ function App() {
             </>
         }
       </Container>
-    </ThemeProvider >
+    </ThemeProvider>
   )
 }
 
